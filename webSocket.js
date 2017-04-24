@@ -8,55 +8,31 @@ const connection = new autobahn.Connection({
   realm: "realm1"
 });
 
-const symbols = new Set();
+// const symbols = new Set();
+
+const serialize = function(obj) {
+  const str = [];
+  for(var p in obj)
+    if (obj.hasOwnProperty(p)) {
+      str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+    }
+  return str.join("&");
+};
 
 connection.onopen = function (session) {
   // function marketEvent (args, kwargs) {
   //   console.log('MarketEvent args are: ' + args + ', kwargs are: ' + kwargs);
   // }
 
-  function logNewSymbols(symbol) {
-    if (!symbols.has(symbol)) {
-      if (symbol.includes('ETH')) {
-        console.log('**************ETH SYMBOL ****************');
-      }
-      console.log('new symbol: ' + symbol);
-    }
-    symbols.add(symbol);
-  }
-
-  function buy() {
-    unirest.post('https://poloniex.com/tradingApi')
-        .headers({'Key': 'the key', 'Sign': 'the sign'})
-        .send({
-          "parameter": "nonce",
-          "command": "buy",
-          "currencyPair": "BTC_ETH",
-          "rate": 3,
-          "amount": .0000001,
-        })
-        .end(function(response) {
-          console.log(response.body);
-        });
-  }
-  function getBalances() {
-
-    const body = JSON.stringify({
-      "command": "returnBalances",
-      "nonce": 4,
-    });
-    console.log(body);
-    const shaObj = createShaObj();
-    shaObj.update(body);
-    const sn = shaObj.getHMAC("HEX");
-    unirest.post('https://poloniex.com/tradingApi')
-        .type('json')
-        .headers({'Key': 'IHMONRUS-JR63BYK0-6582EE1V-OIBE3KBB', 'Sign': sn})
-        .send(body)
-        .end(function(response) {
-          console.log(response);
-        });
-  }
+  // function logNewSymbols(symbol) {
+  //   if (!symbols.has(symbol)) {
+  //     if (symbol.includes('ETH')) {
+  //       console.log('**************ETH SYMBOL ****************');
+  //     }
+  //     console.log('new symbol: ' + symbol);
+  //   }
+  //   symbols.add(symbol);
+  // }
 
   function tickerEvent (args, kwargs) {
     const symbol = args[0];
