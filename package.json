@@ -1,0 +1,17 @@
+{
+  "name": "poloniex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webSocket.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autobahn": "^0.12.0",
+    "jssha": "^2.2.0",
+    "unirest": "^0.5.1"
+  }
+}
