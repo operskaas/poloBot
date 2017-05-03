@@ -1,20 +1,21 @@
-import {readFile} from 'fs';
 import jsSHA from 'jssha';
 import unirest from 'unirest';
 
 import createShaObj from './sha.js';
 
 class ExConn {
-  constructor() {
-    this.setKeySecret_();
-  }
+  constructor() {}
 
-  setKeySecret_ () {
-    readFile('key.txt', 'utf8', (err, data) => {
-      if (err) throw err;
-      const lines = data.split(/\r?\n/);
-      this.key = lines[0];
-      this.secret = lines[1];
+  setKeySecret (file) {
+    this.reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      this.reader.onload = (e) => {
+        const lines = e.target.result.split(/\r?\n/);
+        this.key = lines[0];
+        this.secret = lines[1];
+        resolve(this.getChartData());
+      }
+      this.reader.readAsText(file);
     });
   }
 

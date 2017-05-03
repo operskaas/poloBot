@@ -1,5 +1,5 @@
+import * as d3 from 'd3';
 import techan from 'techan';
-import d3 from 'd3';
 
 import ExConn from './exConn.js';
 
@@ -49,26 +49,36 @@ var accessor = candlestick.accessor();
 
 const conn = new ExConn();
 
+
+
+document.getElementById('file-picker').onchange = (event) => {
+  conn.setKeySecret(event.target.files[0]).then(chartData => {
+    chartData.end(response => {
+      let data = response.body;
+      data = data.map(function(d) {
+        // Open, high, low, close generally not required, is being used here to demonstrate colored volume
+        // bars
+        return {
+          date: parseDate(d.date),
+          volume: +d.volume,
+          open: +d.open,
+          high: +d.high,
+          low: +d.low,
+          close: +d.close
+        };
+      }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+      const ichimokuData = ichimokuIndicator(data);
+      debugger;
+    });
+  });
+}
 const ichimokuIndicator = techan.indicator.ichimoku();
+ichimokuIndicator.tenkanSen(10);
+ichimokuIndicator.kijunSen(30);
+ichimokuIndicator.senkouSpanB(60);
 
 
-conn.getChartData().end(response => {
-  let data = response.body;
-  debugger
-  data = data.map(function(d) {
-    // Open, high, low, close generally not required, is being used here to demonstrate colored volume
-    // bars
-    return {
-      date: parseDate(d.date),
-      volume: +d.volume,
-      open: +d.open,
-      high: +d.high,
-      low: +d.low,
-      close: +d.close
-    };
-  }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
-  const ichimokuData = ichimokuIndicator(data);
-});
+conn.getChartData()
 
 
 
